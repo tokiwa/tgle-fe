@@ -135,6 +135,8 @@ CustomLog "D:/xampp/apache/logs/ssl_request.log" \
 1. Moodleにログインして、コースに配置されたLTIツールのリンクをクリックします。
 1. ユーザのロールにより教員画面あるいは学生画面が表示されます。
 
+![実行結果-Instructor](IMSJapan/tiny_instructor.jpg)
+![実行結果-Learner](IMSJapan/tiny_learner.jpg)
 
 ## デバッグ
 
