@@ -3,27 +3,25 @@
 ## 概要
 
 このサンプルToolは、大学での利用を想定したツールテンプレートです。PlatformであるLMSから起動されたToolはLTI1.
-3にて接続が確立され、ToolがPlatformからIDトークンを受け取った後にmai.phpを実行します。main.
-phpではユーザのroleを参照して、教員あるいは学生用のコードにredirectされます、そしてそれぞれの初期画面を表示します。
-この事例では、 LTI1.3の次の機能が実装されています。
+3にて接続が確立され、ToolがPlatformからIDトークンを受け取った後にmain.phpを実行します。main.
+phpではユーザのroleを参照して、教員あるいは学生用の初期画面を表示するコードにredirectされます。
+この事例では、 LTI1.3の次の機能が実装されています。CoreはLMSとのLTI1.3接続を確立します。また、NRPSはLMSからコース名簿を取り出します。
 - LTI1.3 Tool Core
 - LTI Advantage
   - LTI1.3 NRPS (Names and Role Provisioning Services)
 
 ## Platform環境
 
-LTI1.3 Toolを実行するためには LTI1.3 および LTI Advantage を実装したPlatform が必要となりますが、Moodleを前提としています。 
-MoodleはOpen Source Softwareですので、AWS等で構築することができます。LTI1.3はPlatformとTool間がTLS1.
-2を前提としておりSSL証明書の設定が必要です。
+LTI1.3 Toolと接続するPlatformは LTI1.3 および LTI Advantage を実装している必要があります。ここでは、Moodle3.10 を前提としています。 
+MoodleはOpen Source Softwareですので、AWS等で構築することができます。LTI1.3はPlatformとTool間がTLS1. 2を前提としておりSSL証明書の設定が必要です。
 また、日本IMS協会ではテスト用のMoodleを下記のURLにて構築しています。
 
 https://www.imsjapan.org/moodle/ (2021.xx公開予定)
 
 ## 実行環境
 
-Toolの実行は、開発を行なうローカルPCでWebサーバを稼働させる方法と、AWSのようなクラウドでサーバを稼働させる方法があります。いずれの方法でもCORS 問題への対応にためPHP 7.3 
-以上が必要となります。
-そのためには XAMPPを利用することが最も簡便で下記の環境での稼働を確認しています。
+Toolの実行は、開発を行なうローカルPCでWebサーバを稼働させる方法と、AWSのようなクラウドでサーバを稼働させる方法があります。いずれの方法でもCORS 問題への対応のためPHP 7.3 
+以上が必要となりますが、XAMPPを利用することが最も簡便です。下記のパッケージでの稼働を確認しています。
 
 **ローカルPC**
 - Windows 10 + xampp-windows-x64-7.3.23-0-VC15
@@ -31,17 +29,23 @@ Toolの実行は、開発を行なうローカルPCでWebサーバを稼働さ�
 **AWSで提供されるサーバ** 
 - AWS Linux2 + xampp-linux-x64-7.3.23-0-installer.run
 
-XAMPPについては実行時にNoticeレベルのエラーが生じXMLHttpRequestでやり取りされるコードがエラーを引き起こすため、php.ini において下記を設定してください。
+XAMPPについては実行時にNoticeレベルのエラーが生じるとXMLHttpRequestでやり取りされるコードがエラーを引き起こすため、php.ini において下記を設定してください。
 
 ```
 error_reporting=E_ALL & ~E_NOTICE
 ```
 
-- https化。LTI1.3
-  はPlatformとTool間がTSL1.2で保証されていることが前提となりますので自己証明書によるSSL化します。localhostのSSL化の情報は多々存在しますが、下記が参考になります。
+- https化
+  
+  LTI1.3はPlatformとTool間がTSL1.2で保証されていることが前提となりますので自己証明書によるSSL化します。localhostのSSL化の情報は多々存在しますが、下記が参考になります。
+  
   https://qiita.com/sutara79/items/21a068494bc3a08a4803
-- DocumentRootの設定はxampp/apache/conf/extra/httpd-ssl.conf を下記を参照してください。Document Root は git
-  cloneして生成されるフォルダーとなります。
+  
+- DocumentRootの設定
+  
+httpd.confではなくxampp/apache/conf/extra/httpd-ssl.conf にて設定します。
+下記を参照して設定してください。Document Root は git 
+cloneで作成されるフォルダーとなります。
 
 ```
 ##### Listen is Required for LTI13
@@ -106,7 +110,7 @@ CustomLog "D:/xampp/apache/logs/ssl_request.log" \
 
 ## Toolにおける設定
 
-1. {サンプルプログラムを展開したディレクトリ} にて下記を実行します。vendor　ディレクトリが新規に作成され、そこにIMS LTI Library がインストールされます。
+1. {サンプルプログラムを展開したディレクトリ} にて下記を実行します。vendor　ディレクトリが新規に作成され、そこにIMS LTI1.3 Library がインストールされます。
 ```
     composer.phar install
 ```
