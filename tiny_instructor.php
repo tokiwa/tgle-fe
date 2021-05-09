@@ -22,50 +22,85 @@
 
 <body>
 
-<div id="app">
-    {{message}}
-</div>
-<script src="https://jp.vuejs.org/js/vue.js"></script>
-<script src="main.js"></script>
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/db/example_database.php';
+
+use \IMSGlobal\LTI;
+$launch = LTI\LTI_Message_Launch::from_cache($_REQUEST['launch_id'], new Example_Database());
+
+$members = $launch->get_nrps()->get_members();
+/*foreach ($members as $member) {
+    echo $member['user_id'] . " / " . $member['roles'][0] . " / " . $member['name'] . " / " . $member['email'] . "<br>";
+}*/
+$json = json_encode($members);
+?>
 
 <div class="container">
     <div class="jumbotron">
         <h1 class="text-center">Tiny LTI1.3 Example</h1>
         <p class="text-center">for Instructor</p>
     </div>
-
-    <?php
-    require_once __DIR__ . '/vendor/autoload.php';
-    require_once __DIR__ . '/db/example_database.php';
-
-    use \IMSGlobal\LTI;
-    $launch = LTI\LTI_Message_Launch::from_cache($_REQUEST['launch_id'], new Example_Database());
-    ?>
     <div class="alert alert-info" role="alert">Data by LTI 1.3 Core</div>
-    roles: <?= explode('#',$launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/roles'][0])[1]; ?><br>
-    sub(=user_id): <?= $launch->get_launch_data()['sub']; ?><br>
-    name: <?= $launch->get_launch_data()['name']; ?><br>
-    email: <?= $launch->get_launch_data()['email']; ?><br>
-    version: <?= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/version']; ?><br>
-    context/id: <?= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['id']; ?><br>
-    context/title: <?= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['title']; ?><br>
-    context/label: <?= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label']; ?><br>
+
+<div id="app">
+    name: {{name}} <br>
+    context: {{context}} <br>
+    loginid: {{loginid}} <br>
+<!--    member: {{members}} <br>-->
+    members retrieved by NRPS:
+    <ul>
+        <li v-for="(value, name) in members">
+            {{ name }}: {{value}}
+        </li>
+    </ul>
+
+ </div>
+
+</div>
+
+<script src="https://jp.vuejs.org/js/vue.js"></script>
+<!--<script src="main.js"></script>-->
+<script>
+    Vue.config.devtools = true;
+    var app = new Vue({
+        el: '#app',
+        data: {
+            name: 'Hello Vue from tiny_instructor.php!',
+            context:'',
+            loginid:'',
+            members:[]
+          }
+    });
+
+    app.name = "<?= $launch->get_launch_data()['name']; ?>";
+    app.context = "<?= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['title']; ?>";
+    app.loginid = "<?= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username']; ?>";
+    app.members = <?= $json; ?>;   //ダブルクオート不要
+</script>
+
+<!--<div class="container">
+    <div class="jumbotron">
+        <h1 class="text-center">Tiny LTI1.3 Example</h1>
+        <p class="text-center">for Instructor</p>
+    </div>
+    <div class="alert alert-info" role="alert">Data by LTI 1.3 Core</div>
+    roles: <?/*= explode('#',$launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/roles'][0])[1]; */?><br>
+    sub(=user_id): <?/*= $launch->get_launch_data()['sub']; */?><br>
+    name: <?/*= $launch->get_launch_data()['name']; */?><br>
+    email: <?/*= $launch->get_launch_data()['email']; */?><br>
+    version: <?/*= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/version']; */?><br>
+    context/id: <?/*= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['id']; */?><br>
+    context/title: <?/*= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['title']; */?><br>
+    context/label: <?/*= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label']; */?><br>
     <hr>
     <div class="alert alert-info" role="alert">Data by LTI 1.3 Core - Moodle extension</div>
-    loginid: <?= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username']; ?><br>
-    lms: <?= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['lms']; ?><br>
+    loginid: <?/*= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username']; */?><br>
+    lms: <?/*= $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['lms']; */?><br>
     <hr>
     <div class="alert alert-info" role="alert">Roster by LTI Advantage Name Role Provisioning Service / [user_id/roles/name/email]</div>
 
-    <?php
-    //NRPS
-    $members = $launch->get_nrps()->get_members();
-    foreach ($members as $member) {
-        echo $member['user_id'] . " / " . $member['roles'][0] . " / " . $member['name'] . " / " . $member['email'] . "<br>";
-    }
-    ?>
-
-</div>
+</div>-->
 
 </body>
 </html>
