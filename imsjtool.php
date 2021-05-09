@@ -6,7 +6,7 @@ echo '[PHP_SELF] : '.$_SERVER['PHP_SELF']."<br/>\n";
 //現在のスクリプトが実行されているサーバの IP アドレスです。
 echo '[SERVER_ADDR] : '.$_SERVER['SERVER_ADDR']."<br/>\n";
 
-if ( isset($_SERVER['HTTP_X_FORWARDED_PORT']) === true )
+if ( isset($_SERVER['HTTP_X_FORWARDED_PROTO']) === true )
     {
     echo '[HTTP_X_FORWARDED_PROTO] : ' . $_SERVER['HTTP_X_FORWARDED_PROTO'] . "<br/>\n";
     }

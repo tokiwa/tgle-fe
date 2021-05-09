@@ -21,6 +21,13 @@
 </head>
 
 <body>
+
+<div id="app">
+    {{message}}
+</div>
+<script src="https://jp.vuejs.org/js/vue.js"></script>
+<script src="main.js"></script>
+
 <div class="container">
     <div class="jumbotron">
         <h1 class="text-center">Tiny LTI1.3 Example</h1>
@@ -59,5 +66,6 @@
     ?>
 
 </div>
+
 </body>
 </html>
