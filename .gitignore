@@ -1,4 +1,5 @@
 vendor
+laravel
 #composer.phar
 #composer.lock
 src/game_example/db/keys/*

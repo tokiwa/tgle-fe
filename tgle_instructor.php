@@ -37,24 +37,25 @@ $json = json_encode($members);
 ?>
 
 <div class="container">
-    <div class="jumbotron">
-        <h1 class="text-center">Tiny LTI1.3 Example</h1>
-        <p class="text-center">for Instructor</p>
-    </div>
-    <div class="alert alert-info" role="alert">Data by LTI 1.3 Core</div>
+    <button type="button" class="btn btn-secondary btn-lg btn-block">TGLE: Tools for Group Learning Environment for Instructor</button>
 
 <div id="app">
     name: {{name}} <br>
     context: {{context}} <br>
     loginid: {{loginid}} <br>
-<!--    member: {{members}} <br>-->
-    members retrieved by NRPS:
+
+<!--    [Debug Only] All members retrieved by NRPS:
     <ul>
         <li v-for="(value, name) in members">
             {{ name }}: {{value}}
         </li>
-    </ul>
+    </ul>-->
 
+    Learner members retrieved by NRPS:
+<!--    Index can be retrieved as follows-->
+        <div v-for="(member, index) in members">
+            <span v-if="member.roles[0] == 'Learner'" > {{index}}: {{member.roles[0]}} {{ member.family_name }} {{member.given_name}} <br> </span>
+        </div>
  </div>
 
 </div>
