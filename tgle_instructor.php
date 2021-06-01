@@ -33,6 +33,7 @@ $members = $launch->get_nrps()->get_members();
 /*foreach ($members as $member) {
     echo $member['user_id'] . " / " . $member['roles'][0] . " / " . $member['name'] . " / " . $member['email'] . "<br>";
 }*/
+
 $json = json_encode($members);
 ?>
 
@@ -53,14 +54,16 @@ $json = json_encode($members);
 
     Learner members retrieved by NRPS:
 <!--    Index can be retrieved as follows-->
-        <div v-for="(member, index) in members">
+        <div v-for="(member, index) in members" v-bind:key="index">
+<!--    v-forにおいては、key attributeのバインドがVue.js公式ガイドで推奨されている。-->
             <span v-if="member.roles[0] == 'Learner'" > {{index}}: {{member.roles[0]}} {{ member.family_name }} {{member.given_name}} <br> </span>
         </div>
  </div>
 
 </div>
 
-<script src="https://jp.vuejs.org/js/vue.js"></script>
+<!--<script src="https://jp.vuejs.org/js/vue.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <!--<script src="main.js"></script>-->
 <script>
     Vue.config.devtools = true;
