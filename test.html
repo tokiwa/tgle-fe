@@ -1,0 +1,29 @@
+<script src="https://www.promisejs.org/polyfills/promise-7.0.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <ol>
+        <li v-for="person in vtuber">{{ person.name }}</li>
+    </ol>
+</div>
+<script>
+var app = new Vue({
+el: '#app',
+data: {
+vtuber: []
+},
+mounted: function() {
+var self = this;
+axios
+.get('./sample.json')
+.then(function(response) {
+self.vtuber = response.data.vtuber;
+})
+.catch(function(error) {
+console.log('取得に失敗しました。', error);
+})
+}
+})
+</script>
+
