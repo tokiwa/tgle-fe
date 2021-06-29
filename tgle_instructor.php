@@ -34,7 +34,6 @@ $members = $launch->get_nrps()->get_members();
 /*foreach ($members as $member) {
     echo $member['user_id'] . " / " . $member['roles'][0] . " / " . $member['name'] . " / " . $member['email'] . "<br>";
 }*/
-
 $json = json_encode($members);
 ?>
 
