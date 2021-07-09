@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>WebAPI Test</title>
+</head>
+<body >
+<script src="https://www.promisejs.org/polyfills/promise-7.0.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <input v-model="name">
+    <button v-on:click="createNewUser">OK</button>
+    <br>
+    {{name_cb}} <br>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            users: [],
+            name: '',
+            info: null,
+            name_cb: ''
+        },
+        methods : {
+            createNewUser: function(){
+                axios.post('http://localhost:8000/api/test2',{
+                    name: this.name
+                })
+                    .then(response => this.name_cb = response.data)
+                    .catch(error => console.log(error))
+            }
+        }
+/*        mounted :function(){
+            axios.get('http://localhost:8000/test2')
+                .then(response => this.users = response.data)
+                .catch(error => console.log(error))
+        }*/
+    })
+</script>
+</body>
+</html>
