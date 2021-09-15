@@ -11,10 +11,10 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 <div id="app">
-    <input v-model="name">
-    <button v-on:click="createNewUser">OK</button>
+    <input v-model="date">
+    <button v-on:click="createNewDate">OK</button>
     <br>
-    {{name_cb}} <br>
+    {{date_cb}} <br>
 </div>
 
 <script>
@@ -22,24 +22,19 @@
         el: '#app',
         data: {
             users: [],
-            name: '',
+            date: '',
             info: null,
-            name_cb: ''
+            date_cb: ''
         },
         methods : {
-            createNewUser: function(){
+            createNewDate: function(){
                 axios.post('http://localhost:8000/api/test2',{
-                    name: this.name
+                    date: this.date
                 })
-                    .then(response => this.name_cb = response.data)
+                    .then(response => this.date_cb = response.data)
                     .catch(error => console.log(error))
             }
         }
-/*        mounted :function(){
-            axios.get('http://localhost:8000/test2')
-                .then(response => this.users = response.data)
-                .catch(error => console.log(error))
-        }*/
     })
 </script>
 </body>
