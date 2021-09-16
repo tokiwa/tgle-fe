@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Test4a</title>
+    <title>WebAPI Test</title>
 </head>
 <body >
 <script src="https://www.promisejs.org/polyfills/promise-7.0.4.min.js"></script>
@@ -11,10 +11,11 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 <div id="app">
-    <input v-model="date">
+    <input v-model="userid">
     <button v-on:click="createNewDate">OK</button>
     <br>
-    {{date_cb}} <br>
+    {{userid_cb}}
+    <br>
 </div>
 
 <script>
@@ -22,16 +23,22 @@
         el: '#app',
         data: {
             users: [],
-            date: '',
             info: null,
-            date_cb: ''
+            userid_cb: '',
+            course: '',
+            userid: '',
+            lessonid: 0,
+            keyword:[]
         },
         methods : {
             createNewDate: function(){
-                axios.post('http://localhost:8000/api/test4a',{
-                    date: this.date
+                axios.post('http://localhost:8000/api/test2',{
+                    userid: this.userid,
+                    course: 'u3003',
+                    lessonid: 1,
+                    keyword: ['慶応','早稲田','明治']
                 })
-                    .then(response => this.date_cb = response.data)
+                    .then(response => this.userid_cb = response.data['keyword1'])
                     .catch(error => console.log(error))
             }
         }

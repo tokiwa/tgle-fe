@@ -1,9 +1,9 @@
 {
-    "https://c3.yujitokiwa.jp/moodle": {
+    "https://c3.yujitokiwa.jp": {
         "client_id": "tlmgjAGlTJ8Kbqr",
-        "auth_login_url": "https://c3.yujitokiwa.jp/moodle/mod/lti/auth.php",
-        "auth_token_url": "https://c3.yujitokiwa.jp/moodle/mod/lti/token.php",
-        "key_set_url": "https://c3.yujitokiwa.jp/moodle/mod/lti/certs.php",
+        "auth_login_url": "https://c3.yujitokiwa.jp/mod/lti/auth.php",
+        "auth_token_url": "https://c3.yujitokiwa.jp/mod/lti/token.php",
+        "key_set_url": "https://c3.yujitokiwa.jp/mod/lti/certs.php",
         "private_key_file": "/Tool_Pri.key",
         "deployment": [
             "3"
