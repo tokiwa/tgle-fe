@@ -59,9 +59,9 @@
     <!--    参考　https://blog.capilano-fw.com/?p=7431-->
     追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
     <!-- 入力ボックスを表示する場所 ① -->
-    <div v-for="(text,index) in texts">
+    <div v-for="(text,index) in keyword">
         <!-- 各入力ボックス -->
-        <input ref="texts" type="text" v-model="texts[index]" @keypress.shift.enter="addInput">
+        <input  ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
         <!-- 入力ボックスの削除ボタン -->
         <button type="button" @click="removeInput(index)">削除</button>
     </div>
@@ -71,66 +71,71 @@
     <br><br>
     <!-- 入力されたデータを送信するボタン ③ -->
     すべてのkeywordを入力したら送信をクリックしてください。<br>
-    <button type="button" @click="onSubmit" v-if="isTextMin">送信</button>
+    <button type="button" @click="onSubmit"  v-if="isTextMin">送信</button>
+
+    <br>次のKeywordが登録されました。</br>
+    <div v-text="keyword_cb"></div>
     <!-- 確認用 -->
     <hr>
-    <label>textsの中身</label>
-    <div v-text="texts"></div>
+    <label>keywordの中身</label>
+    <div v-text="keyword"></div>
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 <script>
+
     new Vue({
         el: '#app',
         data: {
-            texts: [], // 複数入力のデータ（配列）
-            maxTextCount: 5 // 👈 追加
+            keyword: [], // 複数入力のデータ（配列）
+            maxTextCount: 5, // 👈 追加
+            keyword_cb:[]
         },
         methods: {
             // ボタンをクリックしたときのイベント ①〜③
             addInput() {
-                if (this.isTextMax) { // 最大件数に達している場合は何もしない
+                if(this.isTextMax) { // 最大件数に達している場合は何もしない
                     return;
                 }
-                this.texts.push(''); // 配列に１つ空データを追加する
+                this.keyword.push(''); // 配列に１つ空データを追加する
+
                 // 👇 追加された入力ボックスにフォーカスする
                 Vue.nextTick(() => {
-                    const maxIndex = this.texts.length - 1;
-                    this.$refs['texts'][maxIndex].focus();
+                    const maxIndex = this.keyword.length - 1;
+                    this.$refs['keyword'][maxIndex].focus();
                 });
             },
             removeInput(index) {
-                this.texts.splice(index, 1); // 👈 該当するデータを削除
+                this.keyword.splice(index, 1); // 👈 該当するデータを削除
             },
             onSubmit() {
-                const url = '/multiple_inputs';
                 const params = {
-                    texts: this.texts
+                    keyword: this.keyword,
+                    "course": "<?= $course_id ;?>",
+                    "userid": "<?= $user_id ;?>",
+                    "lessonid":1
                 };
-                axios.post('http://localhost:8000/api/test', params)
-                    .then(response => {
-                        // 成功した時
-                    })
-                    .catch(error => {
-                        // 失敗した時
-                    });
+                axios.post('http://localhost:8000/api/postkeyword', params)
+                    .then(response => this.keyword_cb = response.data['keyword'])
+                    .catch(error => console.log(error))
             }
         },
         computed: {
             isTextMin() {
-                return (this.texts.length >= 1);
+                return (this.keyword.length >= 1);
             },
             isTextMax() {
-                return (this.texts.length >= this.maxTextCount);
+                return (this.keyword.length >= this.maxTextCount);
             },
             remainingTextCount() {
-                return this.maxTextCount - this.texts.length; // 追加できる残り件数
+                return this.maxTextCount - this.keyword.length; // 追加できる残り件数
             }
         }
-    });
-</script>
 
+    });
+
+</script>
 
 </body>
 </html>

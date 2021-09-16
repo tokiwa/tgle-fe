@@ -32,13 +32,13 @@
         },
         methods : {
             createNewDate: function(){
-                axios.post('http://localhost:8000/api/test2',{
+                axios.post('http://localhost:8000/api/postkeyword',{
                     userid: this.userid,
                     course: 'u3003',
                     lessonid: 1,
                     keyword: ['慶応','早稲田','明治']
                 })
-                    .then(response => this.userid_cb = response.data['keyword1'])
+                    .then(response => this.userid_cb = response.data['keyword'])
                     .catch(error => console.log(error))
             }
         }
