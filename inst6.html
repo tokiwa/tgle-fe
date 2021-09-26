@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>WebAPI Test</title>
+</head>
+<body >
+<div id="app">
+    グループ学習のタイトルを入力してください。<br>
+        <!-- 各入力ボックス -->
+        <input  ref="title" type="text">
+    <br><br>
+    すべてのkeywordを入力したら送信をクリックしてください。<br>
+    <button type="button" @click="onSubmit">送信</button>
+
+    <!-- 確認用 -->
+    <hr>
+    <label>keywordの中身</label>
+    <div v-text="title"></div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+<script>
+
+    new Vue({
+        el: '#app',
+        data: {
+            title: "",
+            title_cb:""
+        },
+        methods: {
+            onSubmit() {
+                const params = {
+                    title: this.title
+                };
+                axios.post('http://localhost:8000/api/postlesson', params)
+                    .then(response => this.title_cb = response.data['title'])
+                    .catch(error => console.log(error))
+            }
+        },
+    });
+
+</script>
+</body>
+</html>
