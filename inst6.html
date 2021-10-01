@@ -7,36 +7,45 @@
 </head>
 <body >
 <div id="app">
-    グループ学習のタイトルを入力してください。<br>
+    グループ学習のタイトルを入力し、送信ボタンをクリックしてください。<br>
         <!-- 各入力ボックス -->
-        <input  ref="title" type="text">
-    <br><br>
-    すべてのkeywordを入力したら送信をクリックしてください。<br>
-    <button type="button" @click="onSubmit">送信</button>
+        <input  v-model="lessontitle" type="text">
 
+    <button type="button" @click="onSubmit">送信</button>
+    <br>
+    <div v-text="lessontitle_cb"></div>
     <!-- 確認用 -->
     <hr>
     <label>keywordの中身</label>
-    <div v-text="title"></div>
+    <div v-text="lessontitle"></div>
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+
 <script>
 
     new Vue({
         el: '#app',
         data: {
-            title: "",
-            title_cb:""
+            lessontitle: "",
+            lessontitle_cb: "",
+            label:"",
+            academicyear:2021
         },
         methods: {
             onSubmit() {
                 const params = {
-                    title: this.title
+                    lessontitle: this.lessontitle,
+                    label: 'u3003',
+                    academicyear: 2021
                 };
                 axios.post('http://localhost:8000/api/postlesson', params)
-                    .then(response => this.title_cb = response.data['title'])
+                    // .then(response => this.title_cb = response.data['title'])
+                    .then(response => {
+                        this.lessontitle_cb = "正常に登録されました。";
+                        console.log('status:', response.status);
+                    })
                     .catch(error => console.log(error))
             }
         },
