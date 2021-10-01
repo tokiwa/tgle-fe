@@ -31,14 +31,18 @@
             lessontitle: "",
             lessontitle_cb: "",
             label:"",
-            academicyear:2021
+            academicyear:0
         },
         methods: {
             onSubmit() {
+                var date = new Date();
+                date.setMonth(date.getMonth() - 3);
+                this.academicyear = date.getFullYear();
+                    //console.log(this.academicyear);
                 const params = {
                     lessontitle: this.lessontitle,
                     label: 'u3003',
-                    academicyear: 2021
+                    academicyear: this.academicyear
                 };
                 axios.post('http://localhost:8000/api/postlesson', params)
                     // .then(response => this.title_cb = response.data['title'])
@@ -48,7 +52,7 @@
                     })
                     .catch(error => console.log(error))
             }
-        },
+        }
     });
 
 </script>
