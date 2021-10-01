@@ -36,15 +36,17 @@
         data: {
             lessontitle: "",
             lessontitle_cb: "",
-            label:"",
-            academicyear:0
+            lessons_cb:[],
+            label: "",
+            academicyear: 0,
+            lessons: [],
         },
         methods: {
-            onSubmit() {
+            submitTitle() {
                 var date = new Date();
                 date.setMonth(date.getMonth() - 3);
                 this.academicyear = date.getFullYear();
-                    //console.log(this.academicyear);
+                //console.log(this.academicyear);
                 const params = {
                     lessontitle: this.lessontitle,
                     label: 'u3003',
@@ -57,7 +59,15 @@
                         console.log('status:', response.status);
                     })
                     .catch(error => console.log(error))
+            },
+
+            getTitle() {
+                axios.get('http://localhost:8000/api/getlesson')
+                    .then(response => this.lessons = response.data)
+                    .catch(error => console.log(error))
             }
+
+
         }
     });
 
