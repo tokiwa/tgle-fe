@@ -16,8 +16,11 @@
     <button type="button" @click="getTitle">登録済レッスン確認</button>
 <!--        <div v-for="lesson in lessons">{{lesson}}</div>-->
     <div>ID : レッスン名</div>
-    <div v-for="(title, id) in lessons">
+<!--    <div v-for="(title, id) in lessons">
         {{id}}:{{title}}
+    </div>-->
+    <div v-for='item in lessons'>
+        {{item.id}}:{{item.lessontitle}}
     </div>
 
     <!-- 確認用 -->
