@@ -7,26 +7,28 @@
 </head>
 <body>
 <div id="app">
+    <h1>グループ管理ダッシュボード</h1>
     グループ学習タイトル登録<br>
     <input v-model="lessontitle" type="text">
     <button type="button" @click="submitTitle">登録</button>
     <br>
     <div v-text="lessontitle_cb"></div>
     <p></p>
-    <button type="button" @click="getTitle">登録済レッスン確認</button>
-    <div>ID : レッスン名</div>
+    <button type="button" @click="getTitle">登録済レッスン一覧表示</button>
     <div v-for='item in lessons'>
-        {{item.id}}:{{item.lessontitle}} <button type="button" @click="getKeyword(item.id)">Detail</button>
+<!--        {{item.id}}:{{item.lessontitle}} <button type="button" @click="getKeyword(item.id)">Detail</button>-->
+        {{item.lessontitle}} <button type="button" @click="getKeyword(item.id)">Detail</button>
     </div>
-
+    <hr>
+    <label>Detail表示コンソール</label>
     <div v-for='keyword in keywords'>
         {{keyword.user}}{{keyword.keyword}}
     </div>
 
     <!-- 確認用 -->
-    <hr>
+<!--    <hr>
     <label>keywordの中身</label>
-    <div v-text="lessontitle"></div>
+    <div v-text="lessontitle"></div>-->
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
