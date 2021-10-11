@@ -16,7 +16,11 @@
     <button type="button" @click="getTitle">登録済レッスン確認</button>
     <div>ID : レッスン名</div>
     <div v-for='item in lessons'>
-        {{item.id}}:{{item.lessontitle}} <button type="button" @click="getKeyword()">Detail</button>
+        {{item.id}}:{{item.lessontitle}} <button type="button" @click="getKeyword(item.id)">Detail</button>
+    </div>
+
+    <div v-for='keyword in keywords'>
+        {{keyword.user}}{{keyword.keyword}}
     </div>
 
     <!-- 確認用 -->
@@ -39,6 +43,7 @@
             label: "",
             academicyear: 0,
             lessons: [],
+            keywords:[],
             check0: 'check write',
         },
         methods: {
@@ -77,18 +82,13 @@
                     .catch(error => console.log(error))
             },
 
-            getKeyword() {
-
+            getKeyword(id) {
                 const params_get = {
-                    label:'u3003',
-                    academicyear:this.academicyear,
-                    status:'active',
+                    lessonid:id
                 };
-
-                this.check1 = "これはテストライトです。"
-/*                axios.get('http://localhost:8000/api/getlesson', {params: params_get})
-                    .then(response => this.lessons = response.data)
-                    .catch(error => console.log(error))*/
+                axios.get('http://localhost:8000/api/getkeyword', {params: params_get})
+                    .then(response => this.keywords = response.data)
+                    .catch(error => console.log(error))
             }
 
 
