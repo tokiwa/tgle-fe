@@ -14,13 +14,9 @@
     <div v-text="lessontitle_cb"></div>
     <p></p>
     <button type="button" @click="getTitle">登録済レッスン確認</button>
-<!--        <div v-for="lesson in lessons">{{lesson}}</div>-->
     <div>ID : レッスン名</div>
-<!--    <div v-for="(title, id) in lessons">
-        {{id}}:{{title}}
-    </div>-->
     <div v-for='item in lessons'>
-        {{item.id}}:{{item.lessontitle}}
+        {{item.id}}:{{item.lessontitle}} <button type="button" @click="getKeyword()">Detail</button>
     </div>
 
     <!-- 確認用 -->
@@ -43,6 +39,7 @@
             label: "",
             academicyear: 0,
             lessons: [],
+            check0: 'check write',
         },
         methods: {
             submitTitle() {
@@ -78,6 +75,20 @@
                 // axios.get('http://localhost:8000/api/getlesson')
                     .then(response => this.lessons = response.data)
                     .catch(error => console.log(error))
+            },
+
+            getKeyword() {
+
+                const params_get = {
+                    label:'u3003',
+                    academicyear:this.academicyear,
+                    status:'active',
+                };
+
+                this.check1 = "これはテストライトです。"
+/*                axios.get('http://localhost:8000/api/getlesson', {params: params_get})
+                    .then(response => this.lessons = response.data)
+                    .catch(error => console.log(error))*/
             }
 
 
