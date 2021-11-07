@@ -9,12 +9,12 @@
 <div id="app">
     <button type="button" @click="getTitle">登録済レッスン確認</button>
     <div>レッスン名</div>
-    <form>
-    <div v-for= '(lesson,index) in lessons'>
+    <!--    <form>-->
+    <div v-for='(lesson,index) in lessons'>
         <input type="radio" id="index" :value="lesson.id" v-model="radioSelect">
         <label :for="index"> {{lesson.lessontitle}}</label>
-     </div>
-    </form>
+    </div>
+    <!--    </form>-->
     <div>Select : {{radioSelect}}</div>
     <hr>
     <!--    参考　https://blog.capilano-fw.com/?p=7431-->
@@ -37,9 +37,9 @@
     <br>次のKeywordが登録されました。</br>
     <div v-text="keyword_cb"></div>
     <!-- 確認用 -->
-<!--    <hr>
-    <label>keywordの中身</label>
-    <div v-text="keyword"></div>-->
+    <!--    <hr>
+        <label>keywordの中身</label>
+        <div v-text="keyword"></div>-->
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
@@ -49,7 +49,7 @@
     new Vue({
         el: '#app',
         data: {
-            radioSelect:"",
+            radioSelect: "",
             label: "",
             status: "",
             academicyear: 0,
@@ -57,7 +57,7 @@
 
             keyword: [], // 複数入力のデータ（配列）
             maxTextCount: 5, // 👈 追加
-            keyword_cb:[]
+            keyword_cb: []
         },
         methods: {
             getTitle() {
