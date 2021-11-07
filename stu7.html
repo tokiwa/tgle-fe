@@ -3,16 +3,26 @@
 <head>
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>WebAPI Test6</title>
+    <title>stu7</title>
 </head>
-<body >
+<body>
 <div id="app">
-<!--    参考　https://blog.capilano-fw.com/?p=7431-->
+    <button type="button" @click="getTitle">登録済レッスン確認</button>
+    <div>レッスン名</div>
+    <form>
+    <div v-for= '(lesson,index) in lessons'>
+        <input type="radio" id="index" :value="lesson.id" v-model="radioSelect">
+        <label :for="index"> {{lesson.lessontitle}}</label>
+     </div>
+    </form>
+    <div>Select : {{radioSelect}}</div>
+    <hr>
+    <!--    参考　https://blog.capilano-fw.com/?p=7431-->
     追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
     <!-- 入力ボックスを表示する場所 ① -->
     <div v-for="(text,index) in keyword">
         <!-- 各入力ボックス -->
-        <input  ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
+        <input ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
         <!-- 入力ボックスの削除ボタン -->
         <button type="button" @click="removeInput(index)">削除</button>
     </div>
@@ -22,31 +32,50 @@
     <br><br>
     <!-- 入力されたデータを送信するボタン ③ -->
     すべてのkeywordを入力したら送信をクリックしてください。<br>
-    <button type="button" @click="onSubmit"  v-if="isTextMin">送信</button>
+    <button type="button" @click="onSubmit" v-if="isTextMin">送信</button>
 
     <br>次のKeywordが登録されました。</br>
     <div v-text="keyword_cb"></div>
     <!-- 確認用 -->
-    <hr>
+<!--    <hr>
     <label>keywordの中身</label>
-    <div v-text="keyword"></div>
+    <div v-text="keyword"></div>-->
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-<script>
 
+<script>
     new Vue({
         el: '#app',
         data: {
+            radioSelect:"",
+            label: "",
+            status: "",
+            academicyear: 0,
+            lessons: [],
+
             keyword: [], // 複数入力のデータ（配列）
             maxTextCount: 5, // 👈 追加
             keyword_cb:[]
         },
         methods: {
-            // ボタンをクリックしたときのイベント ①〜③
+            getTitle() {
+                var date = new Date();
+                date.setMonth(date.getMonth() - 3);
+                this.academicyear = date.getFullYear();
+
+                const params_get = {
+                    label: 'u3003',
+                    academicyear: this.academicyear,
+                    status: 'active'
+                };
+                axios.get('http://localhost:8000/api/getlesson', {params: params_get})
+                    .then(response => this.lessons = response.data)
+                    .catch(error => console.log(error))
+            },
             addInput() {
-                if(this.isTextMax) { // 最大件数に達している場合は何もしない
+                if (this.isTextMax) { // 最大件数に達している場合は何もしない
                     return;
                 }
                 this.keyword.push(''); // 配列に１つ空データを追加する
@@ -63,14 +92,16 @@
             onSubmit() {
                 const params = {
                     keyword: this.keyword,
-                     "course": "u3003",
-                     "userid": "user1",
-                     "lessonid":1
+                    "course": "u3003",
+                    "userid": "user3",
+                    // "lessonid": 1
+                    "lessonid": this.radioSelect
                 };
                 axios.post('http://localhost:8000/api/postkeyword', params)
                     .then(response => this.keyword_cb = response.data['keyword'])
                     .catch(error => console.log(error))
             }
+
         },
         computed: {
             isTextMin() {
@@ -83,7 +114,6 @@
                 return this.maxTextCount - this.keyword.length; // 追加できる残り件数
             }
         }
-
     });
 
 </script>
