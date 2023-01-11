@@ -21,6 +21,15 @@
     <!--    Bootstrap end-->
 
     <script src="https://unpkg.com/vuejs-datepicker"></script>
+
+    <style>
+        h1{
+            font-size:120%;
+            color: #000000;
+            font-weight: bold;
+            margin-top : 1em ;
+        }
+    </style>
 </head>
 
 <body>
@@ -45,27 +54,24 @@ echo "<div class='text-center'>Course ID: " . $course_id . "(暫定的に表示)
 <button type="button" class="btn btn-secondary btn-lg btn-block">TGLE: Tools for Group Learning Environment for
     Instructor
 </button>
-
 <div id="app">
-
-    <div id="app">
-        グループ学習タイトル登録<br>
+    <h1>グループ学習新規登録 (例：グループ学習 yyyy-mm-dd)</h1>
         <input v-model="lessontitle" type="text">
         <button type="button" @click="submitTitle">登録</button>
         <br>
-        <div v-text="lessontitle_cb"></div>
-        <p></p>
-        <button type="button" @click="getTitle">登録済レッスン一覧表示</button>
-        <div v-for='item in lessons'>
-            <!--        {{item.id}}:{{item.lessontitle}} <button type="button" @click="getKeyword(item.id)">Detail</button>-->
-            {{item.lessontitle}}
-            <button type="button" @click="getKeyword(item.id)">Detail</button>
-        </div>
-        <hr>
-        <label>Detail表示コンソール</label>
-        <div v-for='keyword in keywords'>
-            {{keyword.user}}{{keyword.keyword}}
-        </div>
+    <div v-text="lessontitle_cb"></div>
+    <p>&nbsp;</p>
+    <h1>登録済レッスン一覧</h1>
+    <!--        <button type="button" @click="getTitle">登録済レッスン一覧表示</button>-->
+    <div v-for='item in lessons'>
+        <!--        {{item.id}}:{{item.lessontitle}} <button type="button" @click="getKeyword(item.id)">Detail</button>-->
+        {{item.lessontitle}}
+        <button type="button" @click="getKeyword(item.id)">Show Learners' Keywords</button>
+    </div>
+    <hr>
+    <h1>Learners' Keyword specified</h1>
+    <div v-for='keyword in keywords'>
+        {{keyword.user}}{{keyword.keyword}}
     </div>
 </div>
 
@@ -85,6 +91,9 @@ echo "<div class='text-center'>Course ID: " . $course_id . "(暫定的に表示)
             lessons: [],
             keywords: [],
             check0: 'check write',
+        },
+        mounted() {
+            this.getTitle();
         },
         methods: {
             submitTitle() {
@@ -108,6 +117,7 @@ echo "<div class='text-center'>Course ID: " . $course_id . "(暫定的に表示)
             },
 
             getTitle() {
+                // window.onload = ()=>{
                 var date = new Date();
                 date.setMonth(date.getMonth() - 3);
                 this.academicyear = date.getFullYear();
