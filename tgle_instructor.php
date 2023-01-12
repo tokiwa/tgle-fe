@@ -47,7 +47,9 @@ $members = $launch->get_nrps()->get_members();
 $json = json_encode($members);
 
 $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label'];
+$user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username'];
 echo "<div class='text-center'>Course ID: " . $course_id . "(暫定的に表示)</div>";
+echo "<div class='text-center'>User ID: " . $user_id . "</div>";
 echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
 /*label: "<?= $course_id ;?>",　<= Vueの中ではこのようにしてLTIで獲得した変数を参照できる。*/
 
@@ -160,7 +162,10 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
                     keyword: this.keyword,
                     "course": "<?= $course_id ;?>",
                     "userid": "<?= $user_id ;?>",
-                    "lessonid":1
+                    // "lessonid":1
+                    "lessonid": this.radioSelect,
+                    "role":'instructor',
+                    "status":'active'
                 };
                 axios.post('http://localhost:8000/api/postkeyword', params)
                     .then(response => this.keyword_cb = response.data['keyword'])
