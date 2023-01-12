@@ -40,6 +40,7 @@ require_once __DIR__ . '/db/example_database.php';
 
 use \IMSGlobal\LTI;
 
+$role = "instructor";
 $launch = LTI\LTI_Message_Launch::from_cache($_REQUEST['launch_id'], new Example_Database());
 
 $members = $launch->get_nrps()->get_members();
@@ -47,6 +48,7 @@ $json = json_encode($members);
 
 $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label'];
 echo "<div class='text-center'>Course ID: " . $course_id . "(暫定的に表示)</div>";
+echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
 /*label: "<?= $course_id ;?>",　<= Vueの中ではこのようにしてLTIで獲得した変数を参照できる。*/
 
 ?>
@@ -70,9 +72,45 @@ echo "<div class='text-center'>Course ID: " . $course_id . "(暫定的に表示)
     </div>
     <hr>
     <h1>Learners' Keyword specified</h1>
-    <div v-for='keyword in keywords'>
-        {{keyword.user}}{{keyword.keyword}}
+    <div v-for='learner_keyword in learner_keywords'>
+        {{learner_keyword.user}}{{learner_keyword.keyword}}
     </div>
+
+    <h1>キーワード入力</h1>
+
+    <button type="button" @click="getTitle">登録済レッスン確認</button>
+    <div>レッスン名</div>
+    <!--    <form>-->
+    <div v-for='(lesson,index) in lessons'>
+        <input type="radio" id="index" :value="lesson.id" v-model="radioSelect">
+        <label :for="index"> {{lesson.lessontitle}}</label>
+    </div>
+    <!--    </form>-->
+    <div>Select : {{radioSelect}}</div>
+
+    追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
+    <!-- 入力ボックスを表示する場所 ① -->
+    <div v-for="(text,index) in keyword">
+        <!-- 各入力ボックス -->
+        <input  ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
+        <!-- 入力ボックスの削除ボタン -->
+        <button type="button" @click="removeInput(index)">削除</button>
+    </div>
+    <!-- 入力ボックスを追加するボタン ② -->
+    <button type="button" @click="addInput" v-if="!isTextMax">追加</button>
+
+    <br><br>
+    <!-- 入力されたデータを送信するボタン ③ -->
+    すべてのkeywordを入力したら送信をクリックしてください。<br>
+    <button type="button" @click="onSubmit"  v-if="isTextMin">送信</button>
+
+    <br>次のKeywordが登録されました。</br>
+    <div v-text="keyword_cb"></div>
+    <!-- 確認用 -->
+    <hr>
+    <label>keywordの中身</label>
+    <div v-text="keyword"></div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
@@ -83,19 +121,52 @@ echo "<div class='text-center'>Course ID: " . $course_id . "(暫定的に表示)
     new Vue({
         el: '#app',
         data: {
+            //keyword
+            radioSelect: "",
+            keyword: [], // 複数入力のデータ（配列）
+            maxTextCount: 5, // 👈 追加
+            keyword_cb:[],
+            //lesson
             lessontitle: "",
             lessontitle_cb: "",
             lessons_cb: [],
             label: "",
             academicyear: 0,
             lessons: [],
-            keywords: [],
+            learner_keywords: [],
             check0: 'check write',
         },
         mounted() {
             this.getTitle();
         },
         methods: {
+            addInput() {
+                if(this.isTextMax) { // 最大件数に達している場合は何もしない
+                    return;
+                }
+                this.keyword.push(''); // 配列に１つ空データを追加する
+
+                // 👇 追加された入力ボックスにフォーカスする
+                Vue.nextTick(() => {
+                    const maxIndex = this.keyword.length - 1;
+                    this.$refs['keyword'][maxIndex].focus();
+                });
+            },
+            removeInput(index) {
+                this.keyword.splice(index, 1); // 👈 該当するデータを削除
+            },
+            onSubmit() {
+                const params = {
+                    keyword: this.keyword,
+                    "course": "<?= $course_id ;?>",
+                    "userid": "<?= $user_id ;?>",
+                    "lessonid":1
+                };
+                axios.post('http://localhost:8000/api/postkeyword', params)
+                    .then(response => this.keyword_cb = response.data['keyword'])
+                    .catch(error => console.log(error))
+            },
+            //Lesson 作成および登録済確認
             submitTitle() {
                 var date = new Date();
                 date.setMonth(date.getMonth() - 3);
@@ -139,11 +210,22 @@ echo "<div class='text-center'>Course ID: " . $course_id . "(暫定的に表示)
                     lessonid: id
                 };
                 axios.get('http://localhost:8000/api/getkeyword', {params: params_get})
-                    .then(response => this.keywords = response.data)
+                    .then(response => this.learner_keywords = response.data)
                     .catch(error => console.log(error))
             }
 
 
+        },
+        computed: {
+            isTextMin() {
+                return (this.keyword.length >= 1);
+            },
+            isTextMax() {
+                return (this.keyword.length >= this.maxTextCount);
+            },
+            remainingTextCount() {
+                return this.maxTextCount - this.keyword.length; // 追加できる残り件数
+            }
         }
     });
 
