@@ -23,11 +23,11 @@
     <script src="https://unpkg.com/vuejs-datepicker"></script>
 
     <style>
-        h1{
-            font-size:120%;
+        h1 {
+            font-size: 120%;
             color: #000000;
             font-weight: bold;
-            margin-top : 1em ;
+            margin-top: 1em;
         }
     </style>
 </head>
@@ -60,9 +60,9 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
 </button>
 <div id="app">
     <h1>グループ学習新規登録 (例：グループ学習 yyyy-mm-dd)</h1>
-        <input v-model="lessontitle" type="text">
-        <button type="button" @click="submitTitle">登録</button>
-        <br>
+    <input v-model="lessontitle" type="text">
+    <button type="button" @click="submitTitle">登録</button>
+    <br>
     <div v-text="lessontitle_cb"></div>
     <p>&nbsp;</p>
     <h1>登録済レッスン一覧</h1>
@@ -70,17 +70,19 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
         <input type="radio" id="index" :value="lesson.id" v-model="radioSelect">
         <label :for="index"> {{lesson.lessontitle}}</label>
     </div>
-    <div>Select : {{radioSelect}}</div>
+    <div>はじめにLearnerのキーワードを確認したいレッスンをラジオボタンで選択してください。Select : {{radioSelect}}</div>
     <button type="button" @click="getKeyword(radioSelect)">Show Learners' Keywords</button>
     <div v-for='learner_keyword in learner_keywords'>
         {{learner_keyword.user}}{{learner_keyword.keyword}}
     </div>
+    <h1>グループを構成する</h1>
+    <button type="button" @click="mkgroup(radioSelect)">Make Group</button>
     <h1>キーワード入力</h1>
     追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
     <!-- 入力ボックスを表示する場所 ① -->
     <div v-for="(text,index) in keyword">
         <!-- 各入力ボックス -->
-        <input  ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
+        <input ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
         <!-- 入力ボックスの削除ボタン -->
         <button type="button" @click="removeInput(index)">削除</button>
     </div>
@@ -90,7 +92,7 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
     <br><br>
     <!-- 入力されたデータを送信するボタン ③ -->
     すべてのkeywordを入力したら送信をクリックしてください。<br>
-    <button type="button" @click="onSubmit"  v-if="isTextMin">送信</button>
+    <button type="button" @click="onSubmit" v-if="isTextMin">送信</button>
 
     <br>次のKeywordが登録されました。</br>
     <div v-text="keyword_cb"></div>
@@ -113,7 +115,7 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
             radioSelect: "",
             keyword: [], // 複数入力のデータ（配列）
             maxTextCount: 5, // 👈 追加
-            keyword_cb:[],
+            keyword_cb: [],
             //lesson
             lessontitle: "",
             lessontitle_cb: "",
@@ -122,14 +124,14 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
             academicyear: 0,
             lessons: [],
             learner_keywords: [],
-            check0: 'check write',
+            check0: 'check write'
         },
         mounted() {
             this.getTitle();
         },
         methods: {
             addInput() {
-                if(this.isTextMax) { // 最大件数に達している場合は何もしない
+                if (this.isTextMax) { // 最大件数に達している場合は何もしない
                     return;
                 }
                 this.keyword.push(''); // 配列に１つ空データを追加する
@@ -146,12 +148,12 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
             onSubmit() {
                 const params = {
                     keyword: this.keyword,
-                    "course": "<?= $course_id ;?>",
-                    "userid": "<?= $user_id ;?>",
+                    "course": "<?= $course_id;?>",
+                    "userid": "<?= $user_id;?>",
                     // "lessonid":1
                     "lessonid": this.radioSelect,
-                    "role":'instructor',
-                    "status":'active'
+                    "role": 'instructor',
+                    "status": 'active'
                 };
                 axios.post('http://localhost:8000/api/postkeyword', params)
                     .then(response => this.keyword_cb = response.data['keyword'])
@@ -203,8 +205,16 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
                 axios.get('http://localhost:8000/api/getkeyword', {params: params_get})
                     .then(response => this.learner_keywords = response.data)
                     .catch(error => console.log(error))
-            }
+            },
 
+            mkgroup(id) {
+                const params_get = {
+                    lessonid: id
+                };
+                axios.get('http://localhost:8000/api/mkgroup', {params: params_get})
+                    .then(response => this.group_settings = response.data)
+                    .catch(error => console.log(error))
+            }
 
         },
         computed: {
