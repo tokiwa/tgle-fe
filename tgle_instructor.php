@@ -66,30 +66,16 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
     <div v-text="lessontitle_cb"></div>
     <p>&nbsp;</p>
     <h1>登録済レッスン一覧</h1>
-    <!--        <button type="button" @click="getTitle">登録済レッスン一覧表示</button>-->
-    <div v-for='item in lessons'>
-        <!--        {{item.id}}:{{item.lessontitle}} <button type="button" @click="getKeyword(item.id)">Detail</button>-->
-        {{item.lessontitle}}
-        <button type="button" @click="getKeyword(item.id)">Show Learners' Keywords</button>
-    </div>
-    <hr>
-    <h1>Learners' Keyword specified</h1>
-    <div v-for='learner_keyword in learner_keywords'>
-        {{learner_keyword.user}}{{learner_keyword.keyword}}
-    </div>
-
-    <h1>キーワード入力</h1>
-
-    <button type="button" @click="getTitle">登録済レッスン確認</button>
-    <div>レッスン名</div>
-    <!--    <form>-->
     <div v-for='(lesson,index) in lessons'>
         <input type="radio" id="index" :value="lesson.id" v-model="radioSelect">
         <label :for="index"> {{lesson.lessontitle}}</label>
     </div>
-    <!--    </form>-->
     <div>Select : {{radioSelect}}</div>
-
+    <button type="button" @click="getKeyword(radioSelect)">Show Learners' Keywords</button>
+    <div v-for='learner_keyword in learner_keywords'>
+        {{learner_keyword.user}}{{learner_keyword.keyword}}
+    </div>
+    <h1>キーワード入力</h1>
     追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
     <!-- 入力ボックスを表示する場所 ① -->
     <div v-for="(text,index) in keyword">
