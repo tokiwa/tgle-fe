@@ -76,6 +76,15 @@ echo "<div class='text-center'>User ID: " . $user_id . "(暫定表示)</div>";
     <br>次のKeywordが登録されました。</br>
     <div v-text="keyword_cb"></div>
 
+    <h1>グループ確認</h1>
+    <button type="button" @click="getGroup(radioSelect)">Show Learners' Group</button>
+    <div v-for='learner_group in learner_groups' :key = 'learner_group'>
+        {{learner_group.user}}{{learner_group.group}}
+    </div>
+<!--    <div v-for='learner_group in learner_groups'>-->
+<!--        {{learner_group.user}}{{learner_group.group}}-->
+<!--    </div>-->
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
@@ -92,7 +101,9 @@ echo "<div class='text-center'>User ID: " . $user_id . "(暫定表示)</div>";
 
             keyword: [], // 複数入力のデータ（配列）
             maxTextCount: 5, // 👈 追加
-            keyword_cb: []
+            keyword_cb: [],
+
+            learner_groups:[],
         },
         mounted() {
             this.getTitle();
@@ -117,8 +128,6 @@ echo "<div class='text-center'>User ID: " . $user_id . "(暫定表示)</div>";
                     return;
                 }
                 this.keyword.push(''); // 配列に１つ空データを追加する
-
-                // 👇 追加された入力ボックスにフォーカスする
                 Vue.nextTick(() => {
                     const maxIndex = this.keyword.length - 1;
                     this.$refs['keyword'][maxIndex].focus();
@@ -139,7 +148,19 @@ echo "<div class='text-center'>User ID: " . $user_id . "(暫定表示)</div>";
                 axios.post('http://localhost:8000/api/postkeyword', params)
                     .then(response => this.keyword_cb = response.data['keyword'])
                     .catch(error => console.log(error))
-            }
+            },
+
+            getGroup(id) {
+                const params_get = {
+                    lessonid: id,
+                    user_id: "<?= $user_id;?>",
+                    role: 'learner'
+                };
+                axios.get('http://localhost:8000/api/getgroup', {params: params_get})
+                    .then(response => this.learner_groups = response.data)
+                    .catch(error => console.log(error))
+            },
+
 
         },
         computed: {
