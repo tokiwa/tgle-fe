@@ -57,6 +57,7 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
 <button type="button" class="btn btn-secondary btn-lg btn-block">TGLE: Tools for Group Learning Environment for
     Instructor
 </button>
+
 <div id="app">
     <h1>グループ学習新規登録 (例：グループ学習 yyyy-mm-dd)</h1>
     <input v-model="lessontitle" type="text">

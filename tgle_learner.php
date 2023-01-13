@@ -18,84 +18,102 @@
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
     <!--    Bootstrap end-->
+    <style>
+        h1 {
+            font-size: 120%;
+            color: #000000;
+            font-weight: bold;
+            margin-top: 1em;
+        }
+    </style>
 </head>
 
 <body>
-<div class="container">
-    <div class="jumbotron">
-        <h1 class="text-center">TGLE</h1>
-        <p class="text-center">Tools for Group Learning Environment</p>
-    </div>
 
-    <?php
-    require_once __DIR__ . '/vendor/autoload.php';
-    require_once __DIR__ . '/db/example_database.php';
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/db/example_database.php';
 
-    use \IMSGlobal\LTI;
+use \IMSGlobal\LTI;
 
-    $launch = LTI\LTI_Message_Launch::from_cache($_REQUEST['launch_id'], new Example_Database());
+$launch = LTI\LTI_Message_Launch::from_cache($_REQUEST['launch_id'], new Example_Database());
 
-    $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username'];
-    $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label'];
+$user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username'];
+$course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label'];
 
-    echo "<h3 class='text-center'>" . $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['title'] . "</h3>";
-    echo "<p class='text-center'>Course ID: " . $course_id . "</p>";
-    echo "<p class='text-center'>User ID: " . $user_id . "</p>";
-    echo "<p class='text-center'>Name: " . $launch->get_launch_data()['name'] . "</p>";
-    echo "<p class='text-center'>Mail: " . $launch->get_launch_data()['email'] . "</p>";
-    ?>
+echo "<div class='text-center'>Course ID: " . $course_id . "</div>";
+echo "<div class='text-center'>User ID: " . $user_id . "</div>";
+echo "<div class='text-center'>Name: " . $launch->get_launch_data()['name'] . "</div>";
+echo "<div class='text-center'>Mail: " . $launch->get_launch_data()['email'] . "</div>";
+?>
 
-    <p style="line-height : 20px;">　</p>
-
-    <!--    <h3 class='text-center'><a href="tgle_group.php?launch_id=<? /*= $launch->get_launch_id(); */ ?>"> グループ/座席確認 </a>
-    </h3>
-    <p style="line-height : 20px;">　</p>
-    <h3 class='text-center'><a href="tgle_keyword.php?launch_id=<? /*= $launch->get_launch_id(); */ ?>"> Keyword入力 </a>
-    </h3>-->
-
-</div>
+<button type="button" class="btn btn-secondary btn-lg btn-block">TGLE: Tools for Group Learning Environment for
+    Learner
+</button>
 
 <div id="app">
+    <h1>登録済レッスン一覧</h1>
+    <div v-for='(lesson,index) in lessons'>
+        <input type="radio" id="index" :value="lesson.id" v-model="radioSelect">
+        <label :for="index"> {{lesson.lessontitle}}</label>
+    </div>
+    <!--    </form>-->
+    <div>はじめにキーワードを入力したいレッスンをラジオボタンで選択してください。</div>
+    <div>Select : {{radioSelect}}</div>
+    <hr>
     <!--    参考　https://blog.capilano-fw.com/?p=7431-->
     追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
-    <!-- 入力ボックスを表示する場所 ① -->
     <div v-for="(text,index) in keyword">
-        <!-- 各入力ボックス -->
-        <input  ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
-        <!-- 入力ボックスの削除ボタン -->
+        <input ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
         <button type="button" @click="removeInput(index)">削除</button>
     </div>
-    <!-- 入力ボックスを追加するボタン ② -->
     <button type="button" @click="addInput" v-if="!isTextMax">追加</button>
 
     <br><br>
-    <!-- 入力されたデータを送信するボタン ③ -->
     すべてのkeywordを入力したら送信をクリックしてください。<br>
-    <button type="button" @click="onSubmit"  v-if="isTextMin">送信</button>
+    <button type="button" @click="onSubmit" v-if="isTextMin">送信</button>
 
     <br>次のKeywordが登録されました。</br>
     <div v-text="keyword_cb"></div>
-    <!-- 確認用 -->
-    <hr>
-    <label>keywordの中身</label>
-    <div v-text="keyword"></div>
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-<script>
 
+<script>
     new Vue({
         el: '#app',
         data: {
+            radioSelect: "",
+            label: "",
+            status: "",
+            academicyear: 0,
+            lessons: [],
+
             keyword: [], // 複数入力のデータ（配列）
             maxTextCount: 5, // 👈 追加
-            keyword_cb:[]
+            keyword_cb: []
+        },
+        mounted() {
+            this.getTitle();
         },
         methods: {
-            // ボタンをクリックしたときのイベント ①〜③
+            getTitle() {
+                var date = new Date();
+                date.setMonth(date.getMonth() - 3);
+                this.academicyear = date.getFullYear();
+
+                const params_get = {
+                    label: 'u3003',
+                    academicyear: this.academicyear,
+                    status: 'active'
+                };
+                axios.get('http://localhost:8000/api/getlesson', {params: params_get})
+                    .then(response => this.lessons = response.data)
+                    .catch(error => console.log(error))
+            },
             addInput() {
-                if(this.isTextMax) { // 最大件数に達している場合は何もしない
+                if (this.isTextMax) { // 最大件数に達している場合は何もしない
                     return;
                 }
                 this.keyword.push(''); // 配列に１つ空データを追加する
@@ -112,14 +130,17 @@
             onSubmit() {
                 const params = {
                     keyword: this.keyword,
-                    "course": "<?= $course_id ;?>",
-                    "userid": "<?= $user_id ;?>",
-                    "lessonid":1
+                    "course": "<?= $course_id;?>",
+                    "userid": "<?= $user_id;?>",
+                    "lessonid": this.radioSelect,
+                    "role": 'learner',
+                    "status": 'active'
                 };
                 axios.post('http://localhost:8000/api/postkeyword', params)
                     .then(response => this.keyword_cb = response.data['keyword'])
                     .catch(error => console.log(error))
             }
+
         },
         computed: {
             isTextMin() {
@@ -132,10 +153,8 @@
                 return this.maxTextCount - this.keyword.length; // 追加できる残り件数
             }
         }
-
     });
 
 </script>
-
 </body>
 </html>
