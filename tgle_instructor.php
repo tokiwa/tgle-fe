@@ -52,7 +52,6 @@ echo "<div class='text-center'>Course ID: " . $course_id . "(暫定的に表示)
 echo "<div class='text-center'>User ID: " . $user_id . "</div>";
 echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
 /*label: "<?= $course_id ;?>",　<= Vueの中ではこのようにしてLTIで獲得した変数を参照できる。*/
-
 ?>
 
 <button type="button" class="btn btn-secondary btn-lg btn-block">TGLE: Tools for Group Learning Environment for
@@ -76,21 +75,17 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
         {{learner_keyword.user}}{{learner_keyword.keyword}}
     </div>
     <h1>グループを構成する</h1>
-    <button type="button" @click="mkgroup(radioSelect)">Make Group</button>
+    <!-- ラジオボタンをクリックして、radioSelectにて lessonid が確定していること -->
+    <button type="button" @click="mkGroup(radioSelect)">Make Group</button>
     <h1>キーワード入力</h1>
     追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
-    <!-- 入力ボックスを表示する場所 ① -->
     <div v-for="(text,index) in keyword">
-        <!-- 各入力ボックス -->
         <input ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
-        <!-- 入力ボックスの削除ボタン -->
         <button type="button" @click="removeInput(index)">削除</button>
     </div>
-    <!-- 入力ボックスを追加するボタン ② -->
     <button type="button" @click="addInput" v-if="!isTextMax">追加</button>
 
     <br><br>
-    <!-- 入力されたデータを送信するボタン ③ -->
     すべてのkeywordを入力したら送信をクリックしてください。<br>
     <button type="button" @click="onSubmit" v-if="isTextMin">送信</button>
 
@@ -207,7 +202,7 @@ echo "<div class='text-center'>Role: " . $role . "(暫定的に表示)</div>";
                     .catch(error => console.log(error))
             },
 
-            mkgroup(id) {
+            mkGroup(id) {
                 const params_get = {
                     lessonid: id
                 };
