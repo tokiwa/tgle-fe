@@ -78,6 +78,13 @@ echo "<div class='text-center'>Role: " . $role . "(暫定表示)</div>";
     <h1>グループを構成する</h1>
     <!-- ラジオボタンをクリックして、radioSelectにて lessonid が確定していること -->
     <button type="button" @click="mkGroup(radioSelect)">Make Group</button>
+
+    <h1>グループ確認</h1>
+    <button type="button" @click="getGroup(radioSelect)">Show Learners' Group</button>
+    <div v-for='learner_group in learner_groups'>
+        {{learner_group.user}}{{learner_group.group}}
+    </div>
+
     <h1>キーワード入力</h1>
     追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
     <div v-for="(text,index) in keyword">
@@ -120,6 +127,7 @@ echo "<div class='text-center'>Role: " . $role . "(暫定表示)</div>";
             academicyear: 0,
             lessons: [],
             learner_keywords: [],
+            learner_groups:[],
             check0: 'check write'
         },
         mounted() {
@@ -200,6 +208,17 @@ echo "<div class='text-center'>Role: " . $role . "(暫定表示)</div>";
                 };
                 axios.get('http://localhost:8000/api/getkeyword', {params: params_get})
                     .then(response => this.learner_keywords = response.data)
+                    .catch(error => console.log(error))
+            },
+
+            getGroup(id) {
+                const params_get = {
+                    lessonid: id,
+                    user_id: "<?= $user_id;?>",
+                    role: 'instructor'
+                };
+                axios.get('http://localhost:8000/api/getgroup', {params: params_get})
+                    .then(response => this.learner_groups = response.data)
                     .catch(error => console.log(error))
             },
 
