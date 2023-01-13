@@ -41,10 +41,10 @@ $launch = LTI\LTI_Message_Launch::from_cache($_REQUEST['launch_id'], new Example
 $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username'];
 $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label'];
 
-echo "<div class='text-center'>Course ID: " . $course_id . "</div>";
-echo "<div class='text-center'>User ID: " . $user_id . "</div>";
-echo "<div class='text-center'>Name: " . $launch->get_launch_data()['name'] . "</div>";
-echo "<div class='text-center'>Mail: " . $launch->get_launch_data()['email'] . "</div>";
+echo "<div class='text-center'>Course ID: " . $course_id . "(暫定表示)</div>";
+echo "<div class='text-center'>User ID: " . $user_id . "(暫定表示)</div>";
+//echo "<div class='text-center'>Name: " . $launch->get_launch_data()['name'] . "</div>";
+//echo "<div class='text-center'>Mail: " . $launch->get_launch_data()['email'] . "</div>";
 ?>
 
 <button type="button" class="btn btn-secondary btn-lg btn-block">TGLE: Tools for Group Learning Environment for
