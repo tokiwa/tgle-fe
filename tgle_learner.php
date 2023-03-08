@@ -41,8 +41,8 @@ $launch = LTI\LTI_Message_Launch::from_cache($_REQUEST['launch_id'], new Example
 $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username'];
 $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label'];
 
-echo "<div class='text-center'>Course ID: " . $course_id . "(暫定表示)</div>";
-echo "<div class='text-center'>User ID: " . $user_id . "(暫定表示)</div>";
+//echo "<div class='text-center'>Course ID: " . $course_id . "(暫定表示)</div>";
+//echo "<div class='text-center'>User ID: " . $user_id . "(暫定表示)</div>";
 //echo "<div class='text-center'>Name: " . $launch->get_launch_data()['name'] . "</div>";
 //echo "<div class='text-center'>Mail: " . $launch->get_launch_data()['email'] . "</div>";
 ?>
@@ -53,33 +53,32 @@ echo "<div class='text-center'>User ID: " . $user_id . "(暫定表示)</div>";
 
 <div id="app">
     <h1>登録済レッスン一覧</h1>
+    <div>キーワードを入力するレッスンをラジオボタンで選択してください。</div>
     <div v-for='(lesson,index) in lessons'>
         <input type="radio" id="index" :value="lesson.id" v-model="radioSelect">
         <label :for="index"> {{lesson.lessontitle}}</label>
     </div>
     <!--    </form>-->
-    <div>はじめにキーワードを入力したいレッスンをラジオボタンで選択してください。</div>
-    <div>Select : {{radioSelect}}</div>
-    <hr>
-    <!--    参考　https://blog.capilano-fw.com/?p=7431-->
+<!--    <div>はじめにキーワードを入力したいレッスンをラジオボタンで選択してください。</div>-->
+<!--    <div>Select : {{radioSelect}}</div>-->
+    <h1>キーワード入力</h1>
     追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
     <div v-for="(text,index) in keyword">
         <input ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
         <button type="button" @click="removeInput(index)">削除</button>
     </div>
-    <button type="button" @click="addInput" v-if="!isTextMax">追加</button>
-
-    <br><br>
+    <button type="button" @click="addInput" v-if="!isTextMax">追加</button><br>
     すべてのkeywordを入力したら送信をクリックしてください。<br>
     <button type="button" @click="onSubmit" v-if="isTextMin">送信</button>
-
-    <br>次のKeywordが登録されました。</br>
-    <div v-text="keyword_cb"></div>
+<!---->
+<!--    <br>次のKeywordが登録されました。</br>-->
+<!--    <div v-text="keyword_cb"></div>-->
 
     <h1>グループ確認</h1>
-    <button type="button" @click="getGroup(radioSelect)">Show Learners' Group</button>
+    形成されたグループを確認します。<br>
+    <button type="button" @click="getGroup(radioSelect)">グループ構成</button>
     <div v-for='learner_group in learner_groups' :key = 'learner_group'>
-        {{learner_group.user}}{{learner_group.group}}
+        {{learner_group.user}}: {{learner_group.group}}
     </div>
 <!--    <div v-for='learner_group in learner_groups'>-->
 <!--        {{learner_group.user}}{{learner_group.group}}-->

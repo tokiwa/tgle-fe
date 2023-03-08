@@ -48,9 +48,11 @@ $json = json_encode($members);
 
 $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label'];
 $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username'];
-echo "<div class='text-center'>Course ID: " . $course_id . "(暫定表示)</div>";
-echo "<div class='text-center'>User ID: " . $user_id . "</div>";
-echo "<div class='text-center'>Role: " . $role . "(暫定表示)</div>";
+
+// tgle3-43
+//echo "<div class='text-center'>Course ID: " . $course_id . "(暫定表示)</div>";
+//echo "<div class='text-center'>User ID: " . $user_id . "</div>";
+//echo "<div class='text-center'>Role: " . $role . "(暫定表示)</div>";
 /*label: "<?= $course_id ;?>",　<= Vueの中ではこのようにしてLTIで獲得した変数を参照できる。*/
 ?>
 
@@ -59,50 +61,60 @@ echo "<div class='text-center'>Role: " . $role . "(暫定表示)</div>";
 </button>
 
 <div id="app">
-    <h1>グループ学習新規登録 (例：グループ学習 yyyy-mm-dd)</h1>
+    <h1>レッスン登録</h1>
+    新規レッスンを登録します。 (例：グループ学習 yyyy-mm-dd) <br>
     <input v-model="lessontitle" type="text">
     <button type="button" @click="submitTitle">登録</button>
     <br>
     <div v-text="lessontitle_cb"></div>
-    <p>&nbsp;</p>
+
     <h1>登録済レッスン一覧</h1>
+    レッスンを選択してください。<br>
     <div v-for='(lesson,index) in lessons'>
         <input type="radio" id="index" :value="lesson.id" v-model="radioSelect">
         <label :for="index"> {{lesson.lessontitle}}</label>
     </div>
-    <div>はじめにLearnerのキーワードを確認したいレッスンをラジオボタンで選択してください。Select : {{radioSelect}}</div>
-    <button type="button" @click="getKeyword(radioSelect)">Show Learners' Keywords</button>
+<!--    <div>レッスンを選択してください。Select : {{radioSelect}}</div>-->
+
+    <h1>受講生キーワード確認</h1>
+    受講生が投稿したキーワードを確認します。<br>
+    <button type="button" @click="getLearnerKeyword(radioSelect)">受講生キーワード一覧</button>
     <div v-for='learner_keyword in learner_keywords'>
-        {{learner_keyword.user}}{{learner_keyword.keyword}}
-    </div>
-    <h1>グループを構成する</h1>
-    <!-- ラジオボタンをクリックして、radioSelectにて lessonid が確定していること -->
-    <button type="button" @click="mkGroup(radioSelect)">Make Group</button>
-
-    <h1>グループ確認</h1>
-    <button type="button" @click="getGroup(radioSelect)">Show Learners' Group</button>
-    <div v-for='learner_group in learner_groups'>
-        {{learner_group.user}}{{learner_group.group}}
+        {{learner_keyword.user}}: {{learner_keyword.keyword}}
     </div>
 
-    <h1>キーワード入力</h1>
+    <h1>教員キーワード確認</h1>
+    教員が投稿したキーワードを確認します。<br>
+    <button type="button" @click="getInstructorKeyword(radioSelect)">教員キーワード一覧</button>
+    <div v-for='instructor_keyword in instructor_keywords'>
+        {{instructor_keyword.keyword}}
+    </div>
+
+    <h1>教員キーワード入力</h1>
     追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
     <div v-for="(text,index) in keyword">
         <input ref="keyword" type="text" v-model="keyword[index]" @keypress.shift.enter="addInput">
         <button type="button" @click="removeInput(index)">削除</button>
     </div>
-    <button type="button" @click="addInput" v-if="!isTextMax">追加</button>
-
-    <br><br>
+    <button type="button" @click="addInput" v-if="!isTextMax">追加</button><br>
     すべてのkeywordを入力したら送信をクリックしてください。<br>
     <button type="button" @click="onSubmit" v-if="isTextMin">送信</button>
 
-    <br>次のKeywordが登録されました。</br>
-    <div v-text="keyword_cb"></div>
-    <!-- 確認用 -->
-    <hr>
-    <label>keywordの中身</label>
-    <div v-text="keyword"></div>
+<!--    <br>次のKeywordが登録されました。</br>-->
+<!--    <div v-text="keyword_cb"></div>-->
+
+    <h1>グループ形成</h1>
+    教員および受講生のキーワードを確認後、グループを形成します。<br>
+    <button type="button" @click="mkGroup(radioSelect)">グループ形成</button>
+
+    <h1>グループ確認</h1>
+    形成されたグループを確認します。<br>
+    <button type="button" @click="getGroup(radioSelect)">グループ構成</button>
+    <div v-for='learner_group in learner_groups'>
+        {{learner_group.user}}: {{learner_group.group}}
+    </div>
+
+
 
 </div>
 
@@ -127,6 +139,7 @@ echo "<div class='text-center'>Role: " . $role . "(暫定表示)</div>";
             academicyear: 0,
             lessons: [],
             learner_keywords: [],
+            instructor_keywords: [],
             learner_groups:[],
             check0: 'check write'
         },
@@ -202,12 +215,23 @@ echo "<div class='text-center'>Role: " . $role . "(暫定表示)</div>";
                     .catch(error => console.log(error))
             },
 
-            getKeyword(id) {
+            getLearnerKeyword(id) {
                 const params_get = {
-                    lessonid: id
+                    lessonid: id,
+                    "role": 'learner'
                 };
                 axios.get('http://localhost:8000/api/getkeyword', {params: params_get})
                     .then(response => this.learner_keywords = response.data)
+                    .catch(error => console.log(error))
+            },
+
+            getInstructorKeyword(id) {
+                const params_get = {
+                    lessonid: id,
+                    "role": 'instructor'
+                };
+                axios.get('http://localhost:8000/api/getkeyword', {params: params_get})
+                    .then(response => this.instructor_keywords = response.data)
                     .catch(error => console.log(error))
             },
 
