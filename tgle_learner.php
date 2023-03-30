@@ -61,6 +61,13 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
     <!--    </form>-->
 <!--    <div>はじめにキーワードを入力したいレッスンをラジオボタンで選択してください。</div>-->
 <!--    <div>Select : {{radioSelect}}</div>-->
+    <h1>教員キーワード確認</h1>
+    教員が投稿したキーワードを確認します。<br>
+    <button type="button" @click="getInstructorKeyword(radioSelect)">教員キーワード一覧</button>
+    <div v-for='instructor_keyword in instructor_keywords'>
+        {{instructor_keyword.keyword}}
+    </div>
+
     <h1>キーワード入力</h1>
     追加をクリックしてkeywordを入力してください。（最大5件。あと<span v-text="remainingTextCount"></span>件入力できます。）<br>
     <div v-for="(text,index) in keyword">
@@ -101,7 +108,7 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
             keyword: [], // 複数入力のデータ（配列）
             maxTextCount: 5, // 👈 追加
             keyword_cb: [],
-
+            instructor_keywords: [],
             learner_groups:[],
         },
         mounted() {
@@ -160,6 +167,15 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
                     .catch(error => console.log(error))
             },
 
+            getInstructorKeyword(id) {
+                const params_get = {
+                    lessonid: id,
+                    "role": 'instructor'
+                };
+                axios.get('http://localhost:8000/api/getkeyword', {params: params_get})
+                    .then(response => this.instructor_keywords = response.data)
+                    .catch(error => console.log(error))
+            },
 
         },
         computed: {
