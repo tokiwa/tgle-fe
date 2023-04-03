@@ -1,22 +1,16 @@
-# lti13-php-tiny-example-tool
+# TGLE Front End
 
 ## 概要
 
-このサンプルToolは、大学での利用を想定したツールテンプレートです。PlatformであるLMSから起動されたToolはLTI1.
-3にて接続が確立され、ToolがPlatformからIDトークンを受け取った後にmain.phpを実行します。main.
-phpではユーザのroleを参照して、教員あるいは学生用の初期画面を表示するコードにredirectされます。
-この事例では、 LTI1.3の次の機能が実装されています。CoreはLMSとのLTI1.3接続を確立します。また、NRPSはLMSからコース名簿を取り出します。
+フロントエンドは、LMSとLTI 1.3 
+により連携し、教員と学生用のインターフェースを提供します。教員向けには、グループ学習のレッスン登録、そのレッスンで行う学習テーマに即した複数のキーワードの入力、グループ形成の実行、といった機能を実装しています。一方、学生向けには、教員が設定したグループ学習のレッスンの選択、そレッスンで議論したいテーマに関連した複数のキーワードの入力、設定されたグループとグループメンバの確認、といった機能を実装しています。1EdTechから提供されるPHP版LTI 1.3を前提とするためプログラミング言語はPHPとし、ユーザインターフェースはJavaScriptおよびVueフレームワークを用いています。
 - LTI1.3 Tool Core
 - LTI Advantage
   - LTI1.3 NRPS (Names and Role Provisioning Services)
 
 ## Platform環境
 
-LTI1.3 Toolと接続するPlatformは LTI1.3 および LTI Advantage を実装している必要があります。ここでは、Moodle3.10 を前提としています。 
-MoodleはOpen Source Softwareですので、AWS等で構築することができます。LTI1.3はPlatformとTool間がTLS1. 2を前提としておりSSL証明書の設定が必要です。
-また、日本IMS協会ではテスト用のMoodleを下記のURLにて構築しています。
-
-https://www.imsjapan.org/moodle/ (2021.xx公開予定)
+LTI1.3 Toolと接続するPlatformは LTI1.3 および LTI Advantage を実装している必要があります。ここでは、Moodle3.10以上および4.0以上を前提としています。
 
 ## 実行環境
 
@@ -25,9 +19,6 @@ Toolの実行は、開発を行なうローカルPCでWebサーバを稼働さ�
 
 **ローカルPC**
 - Windows 10 + xampp-windows-x64-7.3.23-0-VC15
-
-**AWSで提供されるサーバ** 
-- AWS Linux2 + xampp-linux-x64-7.3.23-0-installer.run
 
 XAMPPについては実行時にNoticeレベルのエラーが生じるとXMLHttpRequestでやり取りされるコードがエラーを引き起こすため、php.ini において下記を設定してください。
 
@@ -61,15 +52,17 @@ SSLProxyProtocol all -SSLv3
 
 SSLPassPhraseDialog  builtin
 
-SSLSessionCache "shmcb:D:/xampp/apache/logs/ssl_scache(512000)"
+SSLSessionCache "shmcb:D:/xampp1/apache/logs/ssl_scache(512000)"
 SSLSessionCacheTimeout  300
 
 <VirtualHost _default_:443>
-#########DocumentRoot "D:/xampp/htdocs"
+#########DocumentRoot "D:/xampp1/htdocs"
 
-DocumentRoot "G:/lti13-php-tiny-example-tool"
+# Document Root for LTI13 is specified in this instead of httpd.conf
+# DocumentRoot "G:/tgle3fe"
+DocumentRoot "D:/tgle/fe"
 
-<Directory "G:/lti13-php-tiny-example-tool">
+<Directory "D:/tgle/fe">
     Options Indexes FollowSymLinks Includes ExecCGI
     AllowOverride All
     Require all granted
@@ -77,18 +70,18 @@ DocumentRoot "G:/lti13-php-tiny-example-tool"
 
 ####ServerName localhost:443
 ####ServerAdmin admin@example.com
-ErrorLog "D:/xampp/apache/logs/error.log"
-TransferLog "D:/xampp/apache/logs/access.log"
+ErrorLog "D:/xampp1/apache/logs/error.log"
+TransferLog "D:/xampp1/apache/logs/access.log"
 
 SSLEngine on
 
-SSLCertificateFile "conf/my-localhost.crt"
-SSLCertificateKeyFile "conf/my-localhost.key"
+SSLCertificateFile "conf/my-server.crt"
+SSLCertificateKeyFile "conf/my-server.key"
 
 <FilesMatch "\.(cgi|shtml|phtml|php)$">
     SSLOptions +StdEnvVars
 </FilesMatch>
-<Directory "D:/xampp/apache/cgi-bin">
+<Directory "D:/xampp1/apache/cgi-bin">
     SSLOptions +StdEnvVars
 </Directory>
 
@@ -96,10 +89,10 @@ BrowserMatch "MSIE [2-5]" \
          nokeepalive ssl-unclean-shutdown \
          downgrade-1.0 force-response-1.0
 
-CustomLog "D:/xampp/apache/logs/ssl_request.log" \
+CustomLog "D:/xampp1/apache/logs/ssl_request.log" \
           "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
 
-</VirtualHost>       
+</VirtualHost>     
 ```
 
 ## Moodleにおける設定
@@ -140,10 +133,10 @@ CustomLog "D:/xampp/apache/logs/ssl_request.log" \
 1. ユーザのロールにより教員画面あるいは学生画面が表示されます。
 
 ### Instructor画面
-![実行結果-Instructor](IMSJapan/tiny_instructor.jpg)
+![実行結果-Instructor](IMSJapan/instructor.jpg)
 
 ### Learner画面
-![実行結果-Learner](IMSJapan/tiny_learner.jpg)
+![実行結果-Learner](IMSJapan/learner.jpg)
 
 ## デバッグ
 

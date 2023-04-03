@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>LTI1.3 tiny example tool</title>
+    <title>TGLE Instructor</title>
 
     <!--    Bootstrap begin-->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -49,11 +49,6 @@ $json = json_encode($members);
 $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label'];
 $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username'];
 
-// tgle3-43
-//echo "<div class='text-center'>Course ID: " . $course_id . "(暫定表示)</div>";
-//echo "<div class='text-center'>User ID: " . $user_id . "</div>";
-//echo "<div class='text-center'>Role: " . $role . "(暫定表示)</div>";
-/*label: "<?= $course_id ;?>",　<= Vueの中ではこのようにしてLTIで獲得した変数を参照できる。*/
 ?>
 
 <button type="button" class="btn btn-secondary btn-lg btn-block">TGLE: Tools for Group Learning Environment for
@@ -74,7 +69,6 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
         <input type="radio" id="index" :value="lesson.id" v-model="radioSelect">
         <label :for="index"> {{lesson.lessontitle}}</label>
     </div>
-<!--    <div>レッスンを選択してください。Select : {{radioSelect}}</div>-->
 
     <h1>受講生キーワード確認</h1>
     受講生が投稿したキーワードを確認します。<br>
@@ -100,9 +94,6 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
     すべてのkeywordを入力したら送信をクリックしてください。<br>
     <button type="button" @click="onSubmit" v-if="isTextMin">送信</button>
 
-<!--    <br>次のKeywordが登録されました。</br>-->
-<!--    <div v-text="keyword_cb"></div>-->
-
     <h1>グループ形成</h1>
     教員および受講生のキーワードを確認後、グループを形成します。<br>
     <button type="button" @click="mkGroup(radioSelect)">グループ形成</button>
@@ -113,8 +104,6 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
     <div v-for='learner_group in learner_groups'>
         {{learner_group.user}}: {{learner_group.group}}
     </div>
-
-
 
 </div>
 
@@ -128,10 +117,9 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
         data: {
             //keyword
             radioSelect: "",
-            keyword: [], // 複数入力のデータ（配列）
-            maxTextCount: 5, // 👈 追加
+            keyword: [],
+            maxTextCount: 5,
             keyword_cb: [],
-            //lesson
             lessontitle: "",
             lessontitle_cb: "",
             lessons_cb: [],
@@ -148,19 +136,18 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
         },
         methods: {
             addInput() {
-                if (this.isTextMax) { // 最大件数に達している場合は何もしない
+                if (this.isTextMax) {
                     return;
                 }
-                this.keyword.push(''); // 配列に１つ空データを追加する
+                this.keyword.push('');
 
-                // 👇 追加された入力ボックスにフォーカスする
                 Vue.nextTick(() => {
                     const maxIndex = this.keyword.length - 1;
                     this.$refs['keyword'][maxIndex].focus();
                 });
             },
             removeInput(index) {
-                this.keyword.splice(index, 1); // 👈 該当するデータを削除
+                this.keyword.splice(index, 1);
             },
             onSubmit() {
                 const params = {
@@ -176,7 +163,6 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
                     .then(response => this.keyword_cb = response.data['keyword'])
                     .catch(error => console.log(error))
             },
-            //Lesson 作成および登録済確認
             submitTitle() {
                 var date = new Date();
                 date.setMonth(date.getMonth() - 3);
@@ -189,7 +175,6 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
                     academicyear: this.academicyear
                 };
                 axios.post('http://localhost:8000/api/postlesson', params)
-                    // .then(response => this.title_cb = response.data['title'])
                     .then(response => {
                         this.lessontitle_cb = "正常に登録されました。";
                         console.log('status:', response.status);
@@ -198,13 +183,11 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
             },
 
             getTitle() {
-                // window.onload = ()=>{
                 var date = new Date();
                 date.setMonth(date.getMonth() - 3);
                 this.academicyear = date.getFullYear();
 
                 const params_get = {
-                    // label:'u3003',
                     label: "<?= $course_id;?>",
                     academicyear: this.academicyear,
                     status: 'active'
@@ -264,7 +247,7 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
                 return (this.keyword.length >= this.maxTextCount);
             },
             remainingTextCount() {
-                return this.maxTextCount - this.keyword.length; // 追加できる残り件数
+                return this.maxTextCount - this.keyword.length;
             }
         }
     });

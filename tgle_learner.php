@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TGLE</title>
+    <title>TGLE Learner</title>
     <!--    Bootstrap begin-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -40,11 +40,6 @@ $launch = LTI\LTI_Message_Launch::from_cache($_REQUEST['launch_id'], new Example
 
 $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/ext']['user_username'];
 $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim/context']['label'];
-
-//echo "<div class='text-center'>Course ID: " . $course_id . "(暫定表示)</div>";
-//echo "<div class='text-center'>User ID: " . $user_id . "(暫定表示)</div>";
-//echo "<div class='text-center'>Name: " . $launch->get_launch_data()['name'] . "</div>";
-//echo "<div class='text-center'>Mail: " . $launch->get_launch_data()['email'] . "</div>";
 ?>
 
 <button type="button" class="btn btn-secondary btn-lg btn-block">TGLE: Tools for Group Learning Environment for
@@ -58,9 +53,6 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
         <input type="radio" id="index" :value="lesson.id" v-model="radioSelect">
         <label :for="index"> {{lesson.lessontitle}}</label>
     </div>
-    <!--    </form>-->
-<!--    <div>はじめにキーワードを入力したいレッスンをラジオボタンで選択してください。</div>-->
-<!--    <div>Select : {{radioSelect}}</div>-->
     <h1>教員キーワード確認</h1>
     教員が投稿したキーワードを確認します。<br>
     <button type="button" @click="getInstructorKeyword(radioSelect)">教員キーワード一覧</button>
@@ -77,19 +69,12 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
     <button type="button" @click="addInput" v-if="!isTextMax">追加</button><br>
     すべてのkeywordを入力したら送信をクリックしてください。<br>
     <button type="button" @click="onSubmit" v-if="isTextMin">送信</button>
-<!---->
-<!--    <br>次のKeywordが登録されました。</br>-->
-<!--    <div v-text="keyword_cb"></div>-->
-
     <h1>グループ確認</h1>
     形成されたグループを確認します。<br>
     <button type="button" @click="getGroup(radioSelect)">グループ構成</button>
     <div v-for='learner_group in learner_groups' :key = 'learner_group'>
         {{learner_group.user}}: {{learner_group.group}}
     </div>
-<!--    <div v-for='learner_group in learner_groups'>-->
-<!--        {{learner_group.user}}{{learner_group.group}}-->
-<!--    </div>-->
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
@@ -104,9 +89,8 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
             status: "",
             academicyear: 0,
             lessons: [],
-
-            keyword: [], // 複数入力のデータ（配列）
-            maxTextCount: 5, // 👈 追加
+            keyword: [],
+            maxTextCount: 5,
             keyword_cb: [],
             instructor_keywords: [],
             learner_groups:[],
@@ -130,17 +114,17 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
                     .catch(error => console.log(error))
             },
             addInput() {
-                if (this.isTextMax) { // 最大件数に達している場合は何もしない
+                if (this.isTextMax) {
                     return;
                 }
-                this.keyword.push(''); // 配列に１つ空データを追加する
+                this.keyword.push('');
                 Vue.nextTick(() => {
                     const maxIndex = this.keyword.length - 1;
                     this.$refs['keyword'][maxIndex].focus();
                 });
             },
             removeInput(index) {
-                this.keyword.splice(index, 1); // 👈 該当するデータを削除
+                this.keyword.splice(index, 1);
             },
             onSubmit() {
                 const params = {
@@ -186,7 +170,7 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
                 return (this.keyword.length >= this.maxTextCount);
             },
             remainingTextCount() {
-                return this.maxTextCount - this.keyword.length; // 追加できる残り件数
+                return this.maxTextCount - this.keyword.length;
             }
         }
     });
