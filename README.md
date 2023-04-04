@@ -18,7 +18,7 @@ Toolの実行は、開発を行なうローカルPCでWebサーバを稼働さ�
 以上が必要となりますが、XAMPPを利用することが最も簡便です。下記のパッケージでの稼働を確認しています。
 
 **ローカルPC**
-- Windows 10 + xampp-windows-x64-7.3.23-0-VC15
+- Windows 10 + xampp-windows-x64-7.4.21
 
 XAMPPについては実行時にNoticeレベルのエラーが生じるとXMLHttpRequestでやり取りされるコードがエラーを引き起こすため、php.ini において下記を設定してください。
 
