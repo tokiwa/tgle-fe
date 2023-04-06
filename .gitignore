@@ -1,8 +1,9 @@
 vendor
-laravel
-#composer.phar
-#composer.lock
+composer.phar
+composer.lock
 src/game_example/db/keys/*
 src/game_example/db/configs/local.json
 .env
 .idea
+db/P_pri.pem
+db/Tool_Pri.key
