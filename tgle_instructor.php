@@ -132,6 +132,7 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
             check0: 'check write'
         },
         mounted() {
+            axios.defaults.baseURL = "http://localhost:8000";  //URL of BackEnd Server              
             this.getTitle();
         },
         methods: {
@@ -159,7 +160,7 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
                     "role": 'instructor',
                     "status": 'active'
                 };
-                axios.post('http://localhost:8000/api/postkeyword', params)
+                axios.post('/api/postkeyword', params)
                     .then(response => this.keyword_cb = response.data['keyword'])
                     .catch(error => console.log(error))
             },
@@ -174,7 +175,7 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
                     label: "<?= $course_id;?>",
                     academicyear: this.academicyear
                 };
-                axios.post('http://localhost:8000/api/postlesson', params)
+                axios.post('/api/postlesson', params)
                     .then(response => {
                         this.lessontitle_cb = "正常に登録されました。";
                         console.log('status:', response.status);
@@ -192,7 +193,7 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
                     academicyear: this.academicyear,
                     status: 'active'
                 };
-                axios.get('http://localhost:8000/api/getlesson', {params: params_get})
+                axios.get('/api/getlesson', {params: params_get})
                     // axios.get('http://localhost:8000/api/getlesson')
                     .then(response => this.lessons = response.data)
                     .catch(error => console.log(error))
@@ -203,7 +204,7 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
                     lessonid: id,
                     "role": 'learner'
                 };
-                axios.get('http://localhost:8000/api/getkeyword', {params: params_get})
+                axios.get('/api/getkeyword', {params: params_get})
                     .then(response => this.learner_keywords = response.data)
                     .catch(error => console.log(error))
             },
@@ -213,7 +214,7 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
                     lessonid: id,
                     "role": 'instructor'
                 };
-                axios.get('http://localhost:8000/api/getkeyword', {params: params_get})
+                axios.get('/api/getkeyword', {params: params_get})
                     .then(response => this.instructor_keywords = response.data)
                     .catch(error => console.log(error))
             },
@@ -224,7 +225,7 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
                     user_id: "<?= $user_id;?>",
                     role: 'instructor'
                 };
-                axios.get('http://localhost:8000/api/getgroup', {params: params_get})
+                axios.get('/api/getgroup', {params: params_get})
                     .then(response => this.learner_groups = response.data)
                     .catch(error => console.log(error))
             },
@@ -233,7 +234,7 @@ $user_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/claim
                 const params_get = {
                     lessonid: id
                 };
-                axios.get('http://localhost:8000/api/mkgroup', {params: params_get})
+                axios.get('/api/mkgroup', {params: params_get})
                     .then(response => this.group_settings = response.data)
                     .catch(error => console.log(error))
             }

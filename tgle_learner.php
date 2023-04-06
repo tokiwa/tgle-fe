@@ -96,6 +96,7 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
             learner_groups:[],
         },
         mounted() {
+            axios.defaults.baseURL = "http://localhost:8000";   //URL of BackEnd Server         
             this.getTitle();
         },
         methods: {
@@ -109,7 +110,7 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
                     academicyear: this.academicyear,
                     status: 'active'
                 };
-                axios.get('http://localhost:8000/api/getlesson', {params: params_get})
+                axios.get('/api/getlesson', {params: params_get})
                     .then(response => this.lessons = response.data)
                     .catch(error => console.log(error))
             },
@@ -135,7 +136,7 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
                     "role": 'learner',
                     "status": 'active'
                 };
-                axios.post('http://localhost:8000/api/postkeyword', params)
+                axios.post('/api/postkeyword', params)
                     .then(response => this.keyword_cb = response.data['keyword'])
                     .catch(error => console.log(error))
             },
@@ -146,7 +147,7 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
                     user_id: "<?= $user_id;?>",
                     role: 'learner'
                 };
-                axios.get('http://localhost:8000/api/getgroup', {params: params_get})
+                axios.get('/api/getgroup', {params: params_get})
                     .then(response => this.learner_groups = response.data)
                     .catch(error => console.log(error))
             },
@@ -156,7 +157,7 @@ $course_id = $launch->get_launch_data()['https://purl.imsglobal.org/spec/lti/cla
                     lessonid: id,
                     "role": 'instructor'
                 };
-                axios.get('http://localhost:8000/api/getkeyword', {params: params_get})
+                axios.get('/api/getkeyword', {params: params_get})
                     .then(response => this.instructor_keywords = response.data)
                     .catch(error => console.log(error))
             },
